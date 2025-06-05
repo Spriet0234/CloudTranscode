@@ -1,6 +1,6 @@
 package com.mediatranscode.service.controller;
 
-import com.mediatranscode.service.entity.ProcessingJob;
+import com.mediatranscode.entity.ProcessingJob;
 import com.mediatranscode.service.dto.JobResponse;
 import com.mediatranscode.service.dto.ProcessingRequest;
 import lombok.RequiredArgsConstructor;

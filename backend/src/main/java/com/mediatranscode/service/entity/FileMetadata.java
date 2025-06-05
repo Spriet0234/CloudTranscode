@@ -1,5 +1,6 @@
 package com.mediatranscode.service.entity;
 
+import com.mediatranscode.entity.ProcessingJob;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

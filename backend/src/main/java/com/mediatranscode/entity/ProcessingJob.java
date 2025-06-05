@@ -20,10 +20,10 @@ public class ProcessingJob {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     
-    @Column(nullable = false)
+    @Column(nullable = false, name = "file_name")
     private String fileName;
     
-    @Column(nullable = false)
+    @Column(nullable = false, name = "original_file_name")
     private String originalFileName;
     
     @Column(nullable = false)
