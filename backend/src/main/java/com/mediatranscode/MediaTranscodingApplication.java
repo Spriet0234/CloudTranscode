@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 public class MediaTranscodingApplication {
+    //main
     public static void main(String[] args) {
         SpringApplication.run(MediaTranscodingApplication.class, args);
     }
