@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Upload, Clock, , FileVideo, BarChart3 } from 'lucide-react'
+import { Upload, Clock, FileVideo, BarChart3 } from 'lucide-react'
 import FileUpload from './components/FileUpload'
 import ProcessingQueue from './components/ProcessingQueue'
 import Dashboard from './components/Dashboard'
