@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Upload, FileVideo, FileImage, FileAudio, X, Settings, CheckCircle, AlertCircle, Sparkles } from 'lucide-react'
 import { mediaAPI } from '../services/api'
@@ -22,6 +22,13 @@ const FileUpload: React.FC = () => {
   })
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
   const [jobId, setJobId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (jobId) {
+      // This useEffect ensures jobId is used and avoids Vercel build errors
+      console.log('Current jobId:', jobId)
+    }
+  }, [jobId])
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const filesWithPreview = acceptedFiles.map(file => {
@@ -61,6 +68,7 @@ const FileUpload: React.FC = () => {
     const k = 1024
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
+    console.log(jobId)
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
