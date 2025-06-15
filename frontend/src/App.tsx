@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { Upload, Clock, FileVideo, BarChart3 } from 'lucide-react'
-import FileUpload from './components/FileUpload'
+import { Upload, Clock, FileVideo, FileImage, BarChart3 } from 'lucide-react'
+import VideoUpload from './components/VideoUpload'
+import PictureUploader from './components/PictureUploader'
 import ProcessingQueue from './components/ProcessingQueue'
 import Dashboard from './components/Dashboard'
 import './App.css'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'queue' | 'dashboard'>('upload')
+  const [activeTab, setActiveTab] = useState<'videos' | 'pictures' | 'queue' | 'dashboard'>('videos')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -40,7 +41,8 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8">
             {[
-              { id: 'upload', label: 'Upload', icon: Upload, color: 'text-blue-600' },
+              { id: 'videos', label: 'Videos', icon: FileVideo, color: 'text-blue-600' },
+              { id: 'pictures', label: 'Pictures', icon: FileImage, color: 'text-purple-600' },
               { id: 'queue', label: 'Processing Queue', icon: Clock, color: 'text-amber-600' },
               { id: 'dashboard', label: 'Dashboard', icon: BarChart3, color: 'text-emerald-600' },
             ].map(({ id, label, icon: Icon, color }) => (
@@ -67,7 +69,8 @@ function App() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="animate-fadeIn">
-          {activeTab === 'upload' && <FileUpload />}
+          {activeTab === 'videos' && <VideoUpload />}
+          {activeTab === 'pictures' && <PictureUploader />}
           {activeTab === 'queue' && <ProcessingQueue />}
           {activeTab === 'dashboard' && <Dashboard />}
         </div>

@@ -97,17 +97,19 @@ export interface StatsResponse {
 }
 
 class MediaAPI {
-  async uploadFile(file: File, settings: ProcessingSettings): Promise<UploadResponse> {
+  async uploadFile(file: File, settings: ProcessingSettings): Promise<any> {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('settings', JSON.stringify(settings))
+    formData.append('outputFormat', settings.format)
+    formData.append('outputQuality', settings.quality)
+    // Optionally add more settings as needed
+    // formData.append('settings', JSON.stringify(settings))
 
-    const response = await api.post('/media/upload', formData, {
+    const response = await api.post('/jobs', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     })
-
     return response.data
   }
 
@@ -133,8 +135,8 @@ class MediaAPI {
     return response.data
   }
 
-  async getJob(jobId: string): Promise<JobResponse> {
-    const response = await api.get(`/media/jobs/${jobId}`)
+  async getJob(jobId: string): Promise<any> {
+    const response = await api.get(`/jobs/${jobId}`)
     return response.data
   }
 
@@ -150,6 +152,11 @@ class MediaAPI {
 
   async healthCheck(): Promise<{ status: string; service: string; timestamp: string }> {
     const response = await api.get('/media/health')
+    return response.data
+  }
+
+  async getDownloadUrl(jobId: string): Promise<string> {
+    const response = await api.get(`/jobs/${jobId}/download`, { responseType: 'text' })
     return response.data
   }
 }

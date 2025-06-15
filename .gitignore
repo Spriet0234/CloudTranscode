@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 /generated/prisma
+backend/target/
+
+echo "target/" >> .gitignore
+backend/src/main/resources/firebase-service-account.json
+

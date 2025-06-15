@@ -20,6 +20,8 @@ const FileUpload: React.FC = () => {
     optimizeForWeb: true,
     optimizeForMobile: false,
   })
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
+  const [jobId, setJobId] = useState<string | null>(null)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const filesWithPreview = acceptedFiles.map(file => {
@@ -66,18 +68,39 @@ const FileUpload: React.FC = () => {
     if (files.length === 0) return
 
     setUploading(true)
+    setDownloadUrl(null)
+    setJobId(null)
     const results: Array<{ file: string; success: boolean; message: string }> = []
 
     try {
-      // Upload files one by one
       for (const file of files) {
         try {
+          // Upload file and get job
           const response = await mediaAPI.uploadFile(file, uploadSettings)
           results.push({
             file: file.name,
             success: true,
-            message: response.message || 'Upload successful'
+            message: 'Upload successful, processing...'
           })
+          setJobId(response.id)
+
+          // Poll job status
+          const pollJob = async (jobId: string, retries = 60) => {
+            for (let i = 0; i < retries; i++) {
+              const job = await mediaAPI.getJob(jobId)
+              if (job.status === 'COMPLETED') {
+                const url = await mediaAPI.getDownloadUrl(jobId)
+                setDownloadUrl(url)
+                results[results.length - 1].message = 'Processing complete! Ready to download.'
+                break
+              } else if (job.status === 'FAILED') {
+                results[results.length - 1].message = 'Processing failed.'
+                break
+              }
+              await new Promise(res => setTimeout(res, 2000)) // wait 2s
+            }
+          }
+          pollJob(response.id)
         } catch (error) {
           console.error(`Error uploading ${file.name}:`, error)
           results.push({
@@ -87,14 +110,10 @@ const FileUpload: React.FC = () => {
           })
         }
       }
-
       setUploadResults(results)
-      
-      // Clear files if all uploads were successful
       if (results.every(r => r.success)) {
         setFiles([])
       }
-
     } catch (error) {
       console.error('Upload error:', error)
     } finally {
@@ -304,6 +323,15 @@ const FileUpload: React.FC = () => {
               )}
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Download Button */}
+      {downloadUrl && (
+        <div className="flex justify-center mt-4">
+          <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-green-600 text-white rounded-xl font-semibold shadow-lg hover:bg-green-700 transition">
+            Download Processed File
+          </a>
         </div>
       )}
     </div>

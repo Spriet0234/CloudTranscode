@@ -1,94 +1,42 @@
-server:
-  port: 8080
-  servlet:
-    context-path: /
-
 spring:
   application:
-    name: media-transcoding-service
-  
+    name: media-transcoder
   datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password: 
-    driver-class-name: org.h2.Driver
-  
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  
+    url: ${DATABASE_URL:jdbc:postgresql://db.brngmtvdqyqjghhyuuou.supabase.co:5432/postgres}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:F3Ft+d2zt&RDmV8}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
-  
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
-      enabled: true
-  
-  jackson:
-    default-property-inclusion: non_null
-    serialization:
-      write-dates-as-timestamps: false
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
 
-# Media Processing Configuration
-media:
-  processing:
-    temp-dir: ${java.io.tmpdir}/media-processing
-    max-concurrent-jobs: 5
-    ffmpeg:
-      path: ${FFMPEG_PATH:ffmpeg}
-      timeout: 300000 # 5 minutes
-  
+firebase:
   storage:
-    type: local # or s3
-    local:
-      upload-dir: ./uploads
-      processed-dir: ./processed
-    s3:
-      bucket: ${S3_BUCKET:media-transcoding-bucket}
-      region: ${AWS_REGION:us-east-1}
-      access-key: ${AWS_ACCESS_KEY:}
-      secret-key: ${AWS_SECRET_KEY:}
+    bucket: ${FIREBASE_STORAGE_BUCKET:cloudbasedtranscribe.firebasestorage.app}
 
-# Logging Configuration
-logging:
-  level:
-    com.mediatranscode: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-  file:
-    name: logs/media-transcoding.log
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
 
-# Management and Monitoring
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: always
-
-# Custom application properties
-app:
-  upload:
-    path: ${java.io.tmpdir}/media-uploads
-  storage:
-    type: local # local, s3
-    s3:
-      bucket-name: media-transcoding-bucket
-      region: us-east-1
-  processing:
-    max-concurrent-jobs: 5
-    temp-directory: ${java.io.tmpdir}/media-processing 
+      show-details: always 
