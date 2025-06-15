@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Upload, FileImage, X, Settings, CheckCircle, AlertCircle, Sparkles } from 'lucide-react'
+import { FileImage, X, Settings, CheckCircle, AlertCircle, Sparkles } from 'lucide-react'
 import { mediaAPI } from '../services/api'
 import type { ProcessingSettings } from '../services/api'
 

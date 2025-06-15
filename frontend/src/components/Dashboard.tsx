@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BarChart3, TrendingUp, Clock, HardDrive, Cpu, Users, FileText, Zap, Activity, Server } from 'lucide-react'
+import { BarChart3, TrendingUp, Clock, HardDrive, Users, FileText, Zap, Activity, Server } from 'lucide-react'
 import { mediaAPI } from '../services/api'
 import type { SystemStats } from '../services/api'
 
