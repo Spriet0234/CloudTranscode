@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: media-transcoder
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mediatranscoder
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  redis:
+    host: localhost
+    port: 6379
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+
+firebase:
+  storage:
+    bucket: ${FIREBASE_STORAGE_BUCKET:cloudbasedtranscribe.firebasestorage.app}
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+app:
+  rabbitmq:
+    queue: media_jobs 

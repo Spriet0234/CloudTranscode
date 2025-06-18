@@ -1,0 +1,219 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  username    String?  @unique
+  firstName   String?
+  lastName    String?
+  avatar      String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  jobs        ProcessingJob[]
+  apiKeys     ApiKey[]
+
+  @@map("users")
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  lastUsed  DateTime?
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+
+  // Relationships
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("api_keys")
+}
+
+model ProcessingJob {
+  id                String              @id @default(cuid())
+  filename          String
+  originalFilename  String
+  mimeType          String
+  fileSize          Int
+  status            ProcessingStatus    @default(QUEUED)
+  progress          Float               @default(0)
+  priority          Int                 @default(1)
+  
+  // Processing settings
+  settings          Json
+  
+  // File paths
+  originalPath      String?
+  processedPath     String?
+  thumbnailPath     String?
+  
+  // Processing results
+  processedSize     Int?
+  compressionRatio  Float?
+  processingTime    Int?              // in milliseconds
+  
+  // Error handling
+  errorMessage      String?
+  retryCount        Int                @default(0)
+  maxRetries        Int                @default(3)
+  
+  // Timestamps
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  startedAt         DateTime?
+  completedAt       DateTime?
+  
+  // Relationships
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metadata          FileMetadata?
+  progressLogs      ProcessingLog[]
+
+  @@map("processing_jobs")
+}
+
+model FileMetadata {
+  id              String   @id @default(cuid())
+  
+  // General metadata
+  format          String?
+  duration        Float?   // in seconds
+  bitrate         Int?
+  
+  // Video metadata
+  videoCodec      String?
+  audioCodec      String?
+  width           Int?
+  height          Int?
+  frameRate       Float?
+  aspectRatio     String?
+  
+  // Audio metadata
+  sampleRate      Int?
+  channels        Int?
+  
+  // Image metadata
+  colorSpace      String?
+  quality         Int?
+  
+  // Additional metadata
+  metadata        Json?    // for storing additional file-specific metadata
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relationships
+  jobId           String   @unique
+  job             ProcessingJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("file_metadata")
+}
+
+model ProcessingLog {
+  id        String   @id @default(cuid())
+  level     LogLevel
+  message   String
+  progress  Float?
+  timestamp DateTime @default(now())
+  
+  // Relationships
+  jobId     String
+  job       ProcessingJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@map("processing_logs")
+}
+
+model SystemMetrics {
+  id              String   @id @default(cuid())
+  timestamp       DateTime @default(now())
+  
+  // Job metrics
+  totalJobs       Int      @default(0)
+  queuedJobs      Int      @default(0)
+  processingJobs  Int      @default(0)
+  completedJobs   Int      @default(0)
+  failedJobs      Int      @default(0)
+  
+  // Performance metrics
+  avgProcessingTime Float?
+  avgCompressionRatio Float?
+  totalDataProcessed Int   @default(0) // in bytes
+  totalDataSaved     Int   @default(0) // in bytes
+  
+  // System metrics
+  cpuUsage        Float?
+  memoryUsage     Float?
+  diskUsage       Float?
+  
+  @@map("system_metrics")
+}
+
+model FileType {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "Video", "Audio", "Image"
+  mimeTypes   String[] // e.g., ["video/mp4", "video/avi"]
+  extensions  String[] // e.g., ["mp4", "avi", "mov"]
+  isActive    Boolean  @default(true)
+  
+  // Processing presets
+  presets     ProcessingPreset[]
+
+  @@map("file_types")
+}
+
+model ProcessingPreset {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  settings      Json     // processing configuration
+  isDefault     Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relationships
+  fileTypeId    String
+  fileType      FileType @relation(fields: [fileTypeId], references: [id], onDelete: Cascade)
+
+  @@map("processing_presets")
+}
+
+// Enums
+enum ProcessingStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+  PAUSED
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+}
+
+// Indexes for better query performance
+// These would be added based on common query patterns
