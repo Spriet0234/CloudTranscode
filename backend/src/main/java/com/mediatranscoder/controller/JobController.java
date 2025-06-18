@@ -46,7 +46,7 @@ public class JobController {
             return ResponseEntity.badRequest().build();
         }
     }
-
+ 
     @GetMapping("/{jobId}")
     public ResponseEntity<Job> getJob(@PathVariable UUID jobId) {
         try {
