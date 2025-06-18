@@ -1,0 +1,24 @@
+{
+  "name": "cloud-based-media-transcoding---(2)",
+  "version": "1.0.0",
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spriet0234/CloudTranscode.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Spriet0234/CloudTranscode/issues"
+  },
+  "homepage": "https://github.com/Spriet0234/CloudTranscode#readme",
+  "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "prisma": "^6.9.0"
+  }
+}

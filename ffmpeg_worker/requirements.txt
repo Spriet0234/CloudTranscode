@@ -1,0 +1,4 @@
+ffmpeg-python
+requests
+pika
+firebase-admin 

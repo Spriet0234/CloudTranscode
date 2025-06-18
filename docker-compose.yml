@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  # RabbitMQ for job queue
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # RabbitMQ main port
+      - "15672:15672" # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - media-network
+
+  # Python FFmpeg Worker
+  ffmpeg-worker:
+    build: ./ffmpeg_worker
+    container_name: ffmpeg-worker
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+      QUEUE_NAME: media_jobs
+      BACKEND_UPDATE_URL: http://backend:8080/api/v1/jobs/worker-callback
+      FIREBASE_CREDENTIALS: /app/firebase-service-account.json
+      FIREBASE_BUCKET: cloudbasedtranscribe.firebasestorage.app
+    volumes:
+      - ./ffmpeg_worker/firebase-service-account.json:/app/firebase-service-account.json
+    depends_on:
+      - rabbitmq
+    networks:
+      - media-network
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync
+          path: ./ffmpeg_worker/worker.py
+          target: /app/worker.py
+        - action: rebuild
+          path: ./ffmpeg_worker/requirements.txt
+
+  # Java Backend (optional - you can run this locally for development)
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mediatranscoder
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_REDIS_HOST: redis
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - rabbitmq
+      - db
+      - redis
+    networks:
+      - media-network
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/src
+          target: /app/src
+        - action: rebuild
+          path: ./backend/pom.xml
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: mediatranscoder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - media-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - media-network
+
+volumes:
+  rabbitmq_data:
+  postgres_data:
+  redis_data:
+
+networks:
+  media-network:
+    driver: bridge 
