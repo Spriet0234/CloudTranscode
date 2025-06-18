@@ -278,7 +278,7 @@ const PictureUploader: React.FC = () => {
                 value={uploadSettings.format}
                 onChange={e => setUploadSettings(prev => ({ ...prev, format: e.target.value }))}
                 className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors font-medium"
-                disabled={uploading}
+                disabled={uploading} 
               >
                 <option value="jpg">JPG</option>
                 <option value="png">PNG</option>
