@@ -211,7 +211,7 @@ const PictureUploader: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Upload Area and Settings Side by Side */}
+      {/* Upload Area and Settings Side by Side  */}
       <div className="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
         {/* Upload Area */}
         <div className="flex-1 bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden">
@@ -284,7 +284,7 @@ const PictureUploader: React.FC = () => {
                 <option value="png">PNG</option>
                 <option value="webp">WEBP</option>
                 <option value="gif">GIF</option>
-                <option value="tiff">TIFF</option>
+                <option value="tiff">TIFF</option> 
                 <option value="bmp">BMP</option>
                 <option value="avif">AVIF</option>
                 <option value="heif">HEIF</option>
