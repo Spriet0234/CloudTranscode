@@ -1,18 +1,17 @@
 # Copy this file to .env and update with your actual values
 
-# Database - Replace with your Supabase database URL
-DATABASE_URL="postgresql://username:password@host:5432/database"
+DATABASE_URL="jdbc:postgresql://db.brngmtvdqyqjghhyuuou.supabase.co:5432/postgres"
 
 # Spring Boot Configuration
 DB_USERNAME=postgres
-DB_PASSWORD=password
-ADMIN_PASSWORD=admin123
+DB_PASSWORD=F3Ft+d2zt&RDmV8
+
 
 # Media Processing
 FFMPEG_PATH=ffmpeg
 TEMP_DIR=/tmp/media-processing
 
-# Cloud Storage (if using S3)
+# Cloud Storage (S3)
 AWS_REGION=us-east-1
 AWS_ACCESS_KEY=your_aws_access_key
 AWS_SECRET_KEY=your_aws_secret_key
