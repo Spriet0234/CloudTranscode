@@ -93,13 +93,13 @@ const PictureUploader: React.FC = () => {
           })
           newJobIds.push(response.id)
           // Poll job status
-          const pollJob = async (jobId: string, fileName: string, retries = 60) => {
+          const pollJob = async (jobId: string, retries = 60) => {
             for (let i = 0; i < retries; i++) {
               try {
                 const job = await mediaAPI.getJob(jobId)
                 console.log('Polling job:', jobId, 'status:', job.status, 'outputFormat:', job.outputFormat);
                 if (job.status === 'COMPLETED') {
-                  const url = `http://localhost:8080/api/v1/jobs/${jobId}/download`;
+                  const url = `https://cloudtranscode.onrender.com/api/v1/jobs/${jobId}/download`;
                   setDownloadUrls(prev => ({ ...prev, [jobId]: url }))
                   results[results.length - 1].message = 'Processing complete! Ready to download.'
                   setUploadResults([...results])
@@ -115,7 +115,7 @@ const PictureUploader: React.FC = () => {
               await new Promise(res => setTimeout(res, 2000)) // wait 2s
             }
           }
-          pollJob(response.id, file.name)
+          pollJob(response.id)
         } catch (error) {
           results.push({
             file: file.name,
@@ -140,7 +140,7 @@ const PictureUploader: React.FC = () => {
   const handleDownload = async (url: string, filename: string, jobId: string) => {
     try {
       console.log('Starting download for:', filename);
-      const response = await fetch(`http://localhost:8080/api/v1/jobs/${jobId}/download`, {
+      const response = await fetch(`https://cloudtranscode.onrender.com/api/v1/jobs/${jobId}/download`, {
         method: 'GET',
       });
       console.log('Download response status:', response.status);

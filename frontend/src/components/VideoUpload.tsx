@@ -20,7 +20,6 @@ const VideoUpload: React.FC = () => {
     optimizeForWeb: true,
     optimizeForMobile: false,
   })
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const filesWithPreview = acceptedFiles.map(file => {
@@ -262,13 +261,6 @@ const VideoUpload: React.FC = () => {
               </li>
             ))}
           </ul>
-        </div>
-      )}
-
-      {downloadUrl && (
-        <div>
-          <p>Debug: downloadUrl = {String(downloadUrl)}</p>
-          <button onClick={() => alert(downloadUrl)}>Show Download URL</button>
         </div>
       )}
     </div>
