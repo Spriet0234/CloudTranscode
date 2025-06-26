@@ -26,9 +26,9 @@ public class WebConfig {
                             .exposedHeaders("Content-Disposition", "Content-Type")
                             .allowCredentials(true);
                 } else {
-                    // Production: Restrict to specific origins
+                    // Production: Allow Vercel frontend
                     registry.addMapping("/**")
-                            .allowedOrigins("https://your-production-domain.com") // Update this for production
+                            .allowedOrigins("https://cloud-transcode-frontend.vercel.app")
                             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                             .allowedHeaders("*")
                             .exposedHeaders("Content-Disposition", "Content-Type")
