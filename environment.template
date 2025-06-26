@@ -1,10 +1,10 @@
 # Copy this file to .env and update with your actual values
 
-DATABASE_URL="jdbc:postgresql://db.brngmtvdqyqjghhyuuou.supabase.co:5432/postgres"
+DATABASE_URL="jdbc:postgresql://dpg-d1e9jm7gi27c73ec5l9g-a/cloudtranscodedb"
 
 # Spring Boot Configuration
-DB_USERNAME=postgres
-DB_PASSWORD=F3Ft+d2zt&RDmV8
+DB_USERNAME=cloudtranscodedb_user
+DB_PASSWORD=Nxv1n1t2WQFJ8FzabdxINP8dU1cpn0GY
 
 
 # Media Processing
