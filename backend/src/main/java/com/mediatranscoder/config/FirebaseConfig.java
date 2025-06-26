@@ -22,13 +22,7 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
-            String activeProfile = System.getenv().getOrDefault("SPRING_PROFILES_ACTIVE", "dev");
-            InputStream serviceAccount;
-            if ("prod".equalsIgnoreCase(activeProfile) || "production".equalsIgnoreCase(activeProfile)) {
-                serviceAccount = new FileInputStream("/etc/secrets/firebase-service-account.json");
-            } else {
-                serviceAccount = new ClassPathResource("firebase-service-account.json").getInputStream();
-            }
+            InputStream serviceAccount = new FileInputStream("/etc/secrets/firebase-service-account.json");
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
