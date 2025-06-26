@@ -137,7 +137,7 @@ const PictureUploader: React.FC = () => {
   }
 
   // Download a single file as blob
-  const handleDownload = async (url: string, filename: string, jobId: string) => {
+  const handleDownload = async (filename: string, jobId: string) => {
     try {
       console.log('Starting download for:', filename);
       const response = await fetch(`https://cloudtranscode.onrender.com/api/v1/jobs/${jobId}/download`, {
@@ -180,7 +180,7 @@ const PictureUploader: React.FC = () => {
       jobIds.forEach(jobId => {
         if (downloadUrls[jobId]) {
           const filename = uploadResults.find(r => r.jobId === jobId)?.file || `processed-image.${uploadSettings.format}`
-          handleDownload(downloadUrls[jobId], filename, jobId)
+          handleDownload(filename, jobId)
         }
       })
       return
@@ -380,7 +380,7 @@ const PictureUploader: React.FC = () => {
                       }
                       const downloadFileName = `${baseName}.${extension}`;
                       console.log('Download filename used:', downloadFileName);
-                      handleDownload(downloadUrls[result.jobId ?? ''], downloadFileName, result.jobId ?? '');
+                      handleDownload(downloadFileName, result.jobId ?? '');
                     }}
                   >
                     Download
