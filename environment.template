@@ -18,4 +18,5 @@ AWS_SECRET_KEY=your_aws_secret_key
 S3_BUCKET=your-media-transcoding-bucket
 
 # Development
-NODE_ENV=development 
+NODE_ENV=development
+SPRING_PROFILES_ACTIVE=prod 
