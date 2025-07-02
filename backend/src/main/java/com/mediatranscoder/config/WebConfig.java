@@ -28,7 +28,7 @@ public class WebConfig {
                 } else {
                     // Production: Allow Vercel frontend
                     registry.addMapping("/**")
-                            .allowedOrigins("https://cloud-transcode-frontend.vercel.app")
+                            .allowedOrigins("https://cloud-transcode.vercel.app")
                             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                             .allowedHeaders("*")
                             .exposedHeaders("Content-Disposition", "Content-Type")
