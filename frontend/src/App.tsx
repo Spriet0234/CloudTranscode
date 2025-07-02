@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Clock, FileVideo, FileImage, BarChart3 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { FileVideo, FileImage, BarChart3 } from 'lucide-react'
 import VideoUpload from './components/VideoUpload'
 import PictureUploader from './components/PictureUploader'
 import ProcessingQueue from './components/ProcessingQueue'
@@ -7,7 +7,17 @@ import Dashboard from './components/Dashboard'
 import './App.css'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'videos' | 'pictures' | 'queue' | 'dashboard'>('videos')
+  // On mount, check localStorage for last tab, else default to 'pictures'
+  const getInitialTab = () => {
+    const savedTab = localStorage.getItem('activeTab')
+    return savedTab === 'videos' || savedTab === 'pictures' || savedTab === 'queue' || savedTab === 'dashboard' ? savedTab : 'pictures'
+  }
+  const [activeTab, setActiveTab] = useState<'videos' | 'pictures' | 'queue' | 'dashboard'>(getInitialTab())
+
+  // Save to localStorage whenever activeTab changes
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab)
+  }, [activeTab])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -40,10 +50,11 @@ function App() {
       <nav className="bg-white/60 backdrop-blur-sm border-b border-slate-200/50 sticky top-[88px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8">
-            {[
+            {[{ id: 'pictures', label: 'Pictures', icon: FileImage, color: 'text-purple-600' },
+
               { id: 'videos', label: 'Videos', icon: FileVideo, color: 'text-blue-600' },
-              { id: 'pictures', label: 'Pictures', icon: FileImage, color: 'text-purple-600' },
-              { id: 'queue', label: 'Processing Queue', icon: Clock, color: 'text-amber-600' },
+              
+              // { id: 'queue', label: 'Processing Queue', icon: Clock, color: 'text-amber-600' },
               { id: 'dashboard', label: 'Dashboard', icon: BarChart3, color: 'text-emerald-600' },
             ].map(({ id, label, icon: Icon, color }) => (
               <button
@@ -69,8 +80,9 @@ function App() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="animate-fadeIn">
-          {activeTab === 'videos' && <VideoUpload />}
+          
           {activeTab === 'pictures' && <PictureUploader />}
+          {activeTab === 'videos' && <VideoUpload />}
           {activeTab === 'queue' && <ProcessingQueue />}
           {activeTab === 'dashboard' && <Dashboard />}
         </div>
