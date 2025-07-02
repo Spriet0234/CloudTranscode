@@ -51,6 +51,7 @@ const PictureUploader: React.FC = () => {
   })
   const [downloadUrls, setDownloadUrls] = useState<{ [jobId: string]: string }>({})
   const [jobIds, setJobIds] = useState<string[]>([])
+  const [toast, setToast] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' })
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const filesWithPreview = acceptedFiles.map(file => {
@@ -60,6 +61,10 @@ const PictureUploader: React.FC = () => {
     })
     setFiles(prev => [...prev, ...filesWithPreview])
     setUploadResults([])
+    if (acceptedFiles.length > 0) {
+      setToast({ visible: true, message: `${acceptedFiles.length} file${acceptedFiles.length > 1 ? 's' : ''} added!` })
+      setTimeout(() => setToast({ visible: false, message: '' }), 2000)
+    }
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -211,6 +216,13 @@ const PictureUploader: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {/* Toast Notification */}
+      {toast.visible && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center px-6 py-4 bg-white border border-purple-200 shadow-xl rounded-2xl animate-fadeIn text-purple-700 font-semibold text-base space-x-3">
+          <FileImage className="w-5 h-5 text-purple-500" />
+          <span>{toast.message}</span>
+        </div>
+      )}
       {/* Upload Area and Settings Side by Side  */}
       <div className="flex flex-col md:flex-row md:space-x-8 space-y-8 md:space-y-0">
         {/* Upload Area */}
@@ -404,14 +416,14 @@ const PictureUploader: React.FC = () => {
       )}
 
       {/* File List */}
-      {files.length > 0 && (
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 p-8">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
-              <FileImage className="w-5 h-5 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-800">Files to Upload</h3>
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 p-8">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+            <FileImage className="w-5 h-5 text-white" />
           </div>
+          <h3 className="text-xl font-bold text-slate-800">Files to Upload</h3>
+        </div>
+        {files.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {files.map((file, index) => (
               <div key={index} className="relative group">
@@ -433,8 +445,10 @@ const PictureUploader: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="text-slate-400 text-center py-8">No files selected yet.</div>
+        )}
+      </div>
     </div>
   )
 }
