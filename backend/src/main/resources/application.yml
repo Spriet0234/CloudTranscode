@@ -23,7 +23,7 @@ spring:
     port: 6379
   rabbitmq:
     host: rabbitmq-3-management-1uhh
-    port: 10000
+    port: 5672
     username: guest
     password: guest
     virtual-host: /
