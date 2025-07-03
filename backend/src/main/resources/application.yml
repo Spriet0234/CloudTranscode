@@ -22,8 +22,8 @@ spring:
     host: localhost
     port: 6379
   rabbitmq:
-    host: localhost
-    port: 5672
+    host: rabbitmq-3-management-1uhh
+    port: 10000
     username: guest
     password: guest
     virtual-host: /
