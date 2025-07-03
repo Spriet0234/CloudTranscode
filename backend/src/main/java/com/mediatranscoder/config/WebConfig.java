@@ -17,23 +17,12 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                if ("dev".equals(activeProfile)) {
-                    // Development: Allow all localhost ports
-                    registry.addMapping("/**")
-                            .allowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*")
-                            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                            .allowedHeaders("*")
-                            .exposedHeaders("Content-Disposition", "Content-Type")
-                            .allowCredentials(true);
-                } else {
-                    // Production: Allow Vercel frontend
-                    registry.addMapping("/**")
-                            .allowedOrigins("https://cloud-transcode.vercel.app")
-                            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                            .allowedHeaders("*")
-                            .exposedHeaders("Content-Disposition", "Content-Type")
-                            .allowCredentials(true);
-                }
+                registry.addMapping("/**")
+                    .allowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*", "https://cloud-transcode.vercel.app")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    .allowedHeaders("*")
+                    .exposedHeaders("Content-Disposition", "Content-Type")
+                    .allowCredentials(true);
             }
         };
     }
