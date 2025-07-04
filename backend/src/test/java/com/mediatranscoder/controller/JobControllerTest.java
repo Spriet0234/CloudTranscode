@@ -68,21 +68,17 @@ class JobControllerTest {
 
     @Test
     void testGetJob_NotFound() throws Exception {
-        // Arrange
         when(jobService.getJob(jobId)).thenThrow(new RuntimeException("Job not found"));
 
-        // Act & Assert
         mockMvc.perform(get("/api/v1/jobs/{jobId}", jobId))
             .andExpect(status().isInternalServerError());
     }
 
     @Test
     void testGetJobs_Success() throws Exception {
-        // Arrange
         List<Job> mockJobs = Arrays.asList(mockJob);
         when(jobService.getJobsByStatus(JobStatus.QUEUED)).thenReturn(mockJobs);
 
-        // Act & Assert
         mockMvc.perform(get("/api/v1/jobs")
                 .param("status", "QUEUED"))
             .andExpect(status().isOk())
@@ -92,11 +88,9 @@ class JobControllerTest {
 
     @Test
     void testGetJobs_AllStatuses() throws Exception {
-        // Arrange
         List<Job> mockJobs = Arrays.asList(mockJob);
         when(jobService.getJobsByStatus(null)).thenReturn(mockJobs);
 
-        // Act & Assert
         mockMvc.perform(get("/api/v1/jobs"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id").value(jobId.toString()));
@@ -104,11 +98,9 @@ class JobControllerTest {
 
     @Test
     void testGetQueuedJobs_Success() throws Exception {
-        // Arrange
         List<Job> mockJobs = Arrays.asList(mockJob);
         when(jobService.getQueuedJobs()).thenReturn(mockJobs);
 
-        // Act & Assert
         mockMvc.perform(get("/api/v1/jobs/queued"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id").value(jobId.toString()))
@@ -117,7 +109,6 @@ class JobControllerTest {
 
     @Test
     void testDeleteJob_Success() throws Exception {
-        // Act & Assert
         mockMvc.perform(delete("/api/v1/jobs/{jobId}", jobId))
             .andExpect(status().isOk())
             .andExpect(content().string("Job deleted successfully"));
@@ -125,7 +116,6 @@ class JobControllerTest {
 
     @Test
     void testWorkerCallback_Success() throws Exception {
-        // Arrange
         mockJob.setStatus(JobStatus.COMPLETED);
         mockJob.setProcessedFileKey("processed/test/output.jpg");
         when(jobService.getJob(jobId)).thenReturn(mockJob);
@@ -139,7 +129,6 @@ class JobControllerTest {
             }
             """.formatted(jobId);
 
-        // Act & Assert
         mockMvc.perform(post("/api/v1/jobs/worker-callback")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(callbackData))
@@ -149,7 +138,7 @@ class JobControllerTest {
 
     @Test
     void testWorkerCallback_Failed() throws Exception {
-        // Arrange
+        
         mockJob.setStatus(JobStatus.FAILED);
         mockJob.setErrorMessage("FFmpeg processing failed");
         when(jobService.getJob(jobId)).thenReturn(mockJob);
@@ -163,7 +152,6 @@ class JobControllerTest {
             }
             """.formatted(jobId);
 
-        // Act & Assert
         mockMvc.perform(post("/api/v1/jobs/worker-callback")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(callbackData))
@@ -173,7 +161,6 @@ class JobControllerTest {
 
     @Test
     void testWorkerCallback_InvalidJobId() throws Exception {
-        // Arrange
         String callbackData = """
             {
                 "job_id": "invalid-uuid",
@@ -183,7 +170,6 @@ class JobControllerTest {
             }
             """;
 
-        // Act & Assert
         mockMvc.perform(post("/api/v1/jobs/worker-callback")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(callbackData))
@@ -192,7 +178,6 @@ class JobControllerTest {
 
     @Test
     void testWorkerCallback_MissingJobId() throws Exception {
-        // Arrange
         String callbackData = """
             {
                 "status": "completed",
@@ -201,7 +186,6 @@ class JobControllerTest {
             }
             """;
 
-        // Act & Assert
         mockMvc.perform(post("/api/v1/jobs/worker-callback")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(callbackData))
@@ -210,7 +194,6 @@ class JobControllerTest {
 
     @Test
     void testWorkerCallback_InvalidStatus() throws Exception {
-        // Arrange
         String callbackData = """
             {
                 "job_id": "%s",
@@ -220,7 +203,7 @@ class JobControllerTest {
             }
             """.formatted(jobId);
 
-        // Act & Assert
+      
         mockMvc.perform(post("/api/v1/jobs/worker-callback")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(callbackData))
@@ -229,23 +212,19 @@ class JobControllerTest {
 
     @Test
     void testDownloadJob_Success() throws Exception {
-        // Arrange
         mockJob.setStatus(JobStatus.COMPLETED);
         mockJob.setProcessedFileKey("processed/test/output.jpg");
         when(jobService.getJob(jobId)).thenReturn(mockJob);
 
-        // Act & Assert
         mockMvc.perform(get("/api/v1/jobs/{jobId}/download", jobId))
             .andExpect(status().isOk());
     }
 
     @Test
     void testDownloadJob_NotCompleted() throws Exception {
-        // Arrange
         mockJob.setStatus(JobStatus.QUEUED);
         when(jobService.getJob(jobId)).thenReturn(mockJob);
 
-        // Act & Assert
         mockMvc.perform(get("/api/v1/jobs/{jobId}/download", jobId))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("Job is not completed"));
@@ -253,12 +232,10 @@ class JobControllerTest {
 
     @Test
     void testDownloadJob_NoProcessedFile() throws Exception {
-        // Arrange
         mockJob.setStatus(JobStatus.COMPLETED);
         mockJob.setProcessedFileKey(null);
         when(jobService.getJob(jobId)).thenReturn(mockJob);
 
-        // Act & Assert
         mockMvc.perform(get("/api/v1/jobs/{jobId}/download", jobId))
             .andExpect(status().isBadRequest())
             .andExpect(content().string("No processed file available"));
