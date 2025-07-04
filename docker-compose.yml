@@ -26,7 +26,7 @@ services:
       RABBITMQ_PASS: guest
       QUEUE_NAME: media_jobs
       BACKEND_UPDATE_URL: http://backend:8080/api/v1/jobs/worker-callback
-      FIREBASE_CREDENTIALS: /app/firebase-service-account.json
+      FIREBASE_CREDENTIALS: /etc/secrets/firebase-service-account.json
       FIREBASE_BUCKET: cloudbasedtranscribe.firebasestorage.app
     volumes:
       - ./ffmpeg_worker/firebase-service-account.json:/app/firebase-service-account.json

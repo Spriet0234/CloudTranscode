@@ -63,7 +63,6 @@ class JobServiceTest {
 
     @Test
     void testCreateJob_Success() throws IOException {
-        // Arrange
         String fileKey = "test-key/test-image.jpg";
         String fileUrl = "https://storage.googleapis.com/test-bucket/" + fileKey;
         
@@ -71,10 +70,8 @@ class JobServiceTest {
         when(fileStorageService.getFileUrl(fileKey)).thenReturn(fileUrl);
         when(jobRepository.save(any(Job.class))).thenReturn(mockJob);
 
-        // Act
         Job result = jobService.createJob(mockFile, "jpg", "high", mockSettings);
 
-        // Assert
         assertNotNull(result);
         assertEquals(mockJob.getId(), result.getId());
         assertEquals("test-image.jpg", result.getOriginalFilename());
@@ -84,7 +81,6 @@ class JobServiceTest {
         assertEquals(JobStatus.QUEUED, result.getStatus());
         assertEquals(mockSettings, result.getSettings());
 
-        // Verify interactions
         verify(fileStorageService).storeFile(mockFile);
         verify(fileStorageService).getFileUrl(fileKey);
         verify(jobRepository).save(any(Job.class));
@@ -93,7 +89,6 @@ class JobServiceTest {
 
     @Test
     void testCreateJob_WithNullSettings() throws IOException {
-        // Arrange
         String fileKey = "test-key/test-image.jpg";
         String fileUrl = "https://storage.googleapis.com/test-bucket/" + fileKey;
         
@@ -101,10 +96,8 @@ class JobServiceTest {
         when(fileStorageService.getFileUrl(fileKey)).thenReturn(fileUrl);
         when(jobRepository.save(any(Job.class))).thenReturn(mockJob);
 
-        // Act
         Job result = jobService.createJob(mockFile, "png", "medium", null);
 
-        // Assert
         assertNotNull(result);
         assertEquals("png", result.getOutputFormat());
         assertEquals("medium", result.getOutputQuality());
@@ -115,11 +108,9 @@ class JobServiceTest {
 
     @Test
     void testCreateJob_FileStorageException() throws IOException {
-        // Arrange
         when(fileStorageService.storeFile(any(MockMultipartFile.class)))
             .thenThrow(new IOException("Storage service error"));
 
-        // Act & Assert
         assertThrows(IOException.class, () -> {
             jobService.createJob(mockFile, "jpg", "high", mockSettings);
         });
@@ -130,14 +121,11 @@ class JobServiceTest {
 
     @Test
     void testGetJob_Success() {
-        // Arrange
         UUID jobId = UUID.randomUUID();
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(mockJob));
 
-        // Act
         Job result = jobService.getJob(jobId);
 
-        // Assert
         assertNotNull(result);
         assertEquals(mockJob.getId(), result.getId());
         verify(jobRepository).findById(jobId);
@@ -145,11 +133,9 @@ class JobServiceTest {
 
     @Test
     void testGetJob_NotFound() {
-        // Arrange
         UUID jobId = UUID.randomUUID();
         when(jobRepository.findById(jobId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> {
             jobService.getJob(jobId);
         });
@@ -159,14 +145,11 @@ class JobServiceTest {
 
     @Test
     void testGetJobsByStatus() {
-        // Arrange
         List<Job> mockJobs = Arrays.asList(mockJob);
         when(jobRepository.findByStatus(JobStatus.QUEUED)).thenReturn(mockJobs);
 
-        // Act
         List<Job> result = jobService.getJobsByStatus(JobStatus.QUEUED);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(mockJob.getId(), result.get(0).getId());
@@ -175,14 +158,11 @@ class JobServiceTest {
 
     @Test
     void testGetQueuedJobs() {
-        // Arrange
         List<Job> mockJobs = Arrays.asList(mockJob);
         when(jobRepository.findByStatusOrderByCreatedAtAsc(JobStatus.QUEUED)).thenReturn(mockJobs);
 
-        // Act
         List<Job> result = jobService.getQueuedJobs();
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(mockJob.getId(), result.get(0).getId());
@@ -191,13 +171,10 @@ class JobServiceTest {
 
     @Test
     void testDeleteJob() {
-        // Arrange
         UUID jobId = UUID.randomUUID();
 
-        // Act
         jobService.deleteJob(jobId);
 
-        // Assert
         verify(jobRepository).deleteById(jobId);
     }
 } 
